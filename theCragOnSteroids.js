@@ -15,6 +15,14 @@
 (function() {
   'use strict';
 
+  function getCurrentCrag(selector) {
+    return selector.length > 1 ? selector[1].querySelector('a').text : '';
+  }
+
+  function getCurrentSector(selector) {
+    return selector.length > 0 ? selector[0].querySelector('a').text : '';
+  }
+
   const routesTable = document.getElementsByClassName('routetable facet-results')[0];
   routesTable.id = 'resultTable';
   const cragsByGroup = routesTable.getElementsByClassName('group');
@@ -27,16 +35,8 @@
   let currentSector = '';
   let currentCrag = '';
 
-  function getCurrentCrag(selector) {
-    return selector.length > 1 ? selector[1].querySelector('a').text : '';
-  }
-
-  function getCurrentSector(selector) {
-    return selector[0].querySelector('a').text;
-  }
-
   Array.from(routesRows).forEach((el, index) => {
-    if (index != 0) {
+    if (index != 0 && el.innerText != '') {
       if (el.getElementsByClassName('crumbtrail-partial__crumb nowrap').length != 0) {
         const thisSelector = el.getElementsByClassName('crumbtrail-partial__crumb nowrap');
         currentSector = getCurrentSector(thisSelector);
@@ -58,7 +58,7 @@
     }
   });
 
-  Array.from(cragsByGroup).forEach((el, index) => {
+  Array.from(cragsByGroup).forEach((el) => {
     const countDiv = document.createElement('div');
     countDiv.style = 'display: inline; float: right;';
     const thisSelector = el.getElementsByClassName('crumbtrail-partial__crumb nowrap');
@@ -66,7 +66,8 @@
     currentCrag = getCurrentCrag(thisSelector);
     const inSector = `${routesByCragMap.get(currentSector).totalRoutes} route${routesByCragMap.get(currentSector).totalRoutes > 1 ? 's' : ''} in sector ${currentSector}`;
     const inCrag = `${routesByCragMap.get(currentSector).Crags.get(currentCrag).routes} route${routesByCragMap.get(currentSector).Crags.get(currentCrag).routes > 1 ? 's': ''} in crag ${currentCrag}`;
-    countDiv.textContent = currentCrag != '' ? `   (${inSector}, ` : '';
+    countDiv.textContent = '   (';
+    countDiv.textContent += currentCrag != '' ? `${inSector}, ` : '';
     countDiv.textContent += `${inCrag}`;
     countDiv.textContent += 'on this page)';
     el.appendChild(countDiv);
