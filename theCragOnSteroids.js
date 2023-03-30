@@ -9,6 +9,7 @@
 // @match        https://www.thecrag.com/*/routes*
 // @icon         https://static.thecrag.com/cids/images/logo17-1.1.1.svg
 // @grant        none
+// @require      file:///Users/thomasheuberger/Documents/Repos/theCragOnSteroids/theCragOnSteroids.js
 // ==/UserScript==
 
 (function() {
