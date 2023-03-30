@@ -14,42 +14,44 @@
 (function() {
   'use strict';
 
-  function getCurrentCrag(selector) {
-    return selector.length > 1 ? selector[1].querySelector('a').text : '';
+  const HEADERIDENTIFIER = 'tbody > tr:nth-child(1) > th:nth-child(4)';
+  const NAMEROWIDENTIFIER = 'crumbtrail-partial__crumb nowrap';
+  const ROUTETABLEIDENTIFIER = 'routetable facet-results';
+
+  const STYLE = 'display: inline; float: right;';
+
+  function getInfo(selector) {
+    return {
+      sector: selector.length > 0 ? selector[0].querySelector('a').text : '',
+      crag: selector.length > 1 ? selector[1].querySelector('a').text : '',
+    };
   }
 
-  function getCurrentSector(selector) {
-    return selector.length > 0 ? selector[0].querySelector('a').text : '';
-  }
-
-  const routesTable = document.getElementsByClassName('routetable facet-results')[0];
+  const routesTable = document.getElementsByClassName(ROUTETABLEIDENTIFIER)[0];
   const cragsByGroup = routesTable.getElementsByClassName('group');
-  const header = routesTable.querySelector('tbody > tr:nth-child(1) > th:nth-child(4)');
+  const header = routesTable.querySelector(HEADERIDENTIFIER);
   const routesRows = routesTable.querySelector('tbody').getElementsByTagName('tr');
 
   header.appendChild(document.createTextNode(`   (Displaying ${cragsByGroup.length} crag${cragsByGroup.length > 1 ? 's' : ''} on this page)`));
 
   const routesByCragMap = new Map();
-  let currentSector = '';
-  let currentCrag = '';
+  let info = {};
 
   Array.from(routesRows).forEach((el, index) => {
     if (index != 0 && el.innerText != '') {
-      if (el.getElementsByClassName('crumbtrail-partial__crumb nowrap').length != 0) {
-        const thisSelector = el.getElementsByClassName('crumbtrail-partial__crumb nowrap');
-        currentSector = getCurrentSector(thisSelector);
-        currentCrag = getCurrentCrag(thisSelector);
+      if (el.getElementsByClassName(NAMEROWIDENTIFIER).length != 0) {
+        info = getInfo(el.getElementsByClassName(NAMEROWIDENTIFIER));
       } else {
-        if (!routesByCragMap.has(currentSector)) {
+        if (!routesByCragMap.has(info.sector)) {
           const thisCrag = new Map();
-          thisCrag.set(currentCrag, {routes: 1});
-          routesByCragMap.set(currentSector, {totalRoutes: 1, Crags: thisCrag});
+          thisCrag.set(info.crag, {routes: 1});
+          routesByCragMap.set(info.sector, {totalRoutes: 1, Crags: thisCrag});
         } else {
-          routesByCragMap.get(currentSector).totalRoutes += 1;
-          if (!routesByCragMap.get(currentSector).Crags.has(currentCrag)) {
-            routesByCragMap.get(currentSector).Crags.set(currentCrag, {routes: 1});
+          routesByCragMap.get(info.sector).totalRoutes += 1;
+          if (!routesByCragMap.get(info.sector).Crags.has(info.crag)) {
+            routesByCragMap.get(info.sector).Crags.set(info.crag, {routes: 1});
           } else {
-            routesByCragMap.get(currentSector).Crags.get(currentCrag).routes += 1;
+            routesByCragMap.get(info.sector).Crags.get(info.crag).routes += 1;
           }
         }
       }
@@ -58,14 +60,12 @@
 
   Array.from(cragsByGroup).forEach((el) => {
     const countDiv = document.createElement('div');
-    countDiv.style = 'display: inline; float: right;';
-    const thisSelector = el.getElementsByClassName('crumbtrail-partial__crumb nowrap');
-    currentSector = getCurrentSector(thisSelector);
-    currentCrag = getCurrentCrag(thisSelector);
-    const inSector = `${routesByCragMap.get(currentSector).totalRoutes} route${routesByCragMap.get(currentSector).totalRoutes > 1 ? 's' : ''} in sector ${currentSector}`;
-    const inCrag = `${routesByCragMap.get(currentSector).Crags.get(currentCrag).routes} route${routesByCragMap.get(currentSector).Crags.get(currentCrag).routes > 1 ? 's': ''} in crag ${currentCrag}`;
+    countDiv.style = STYLE;
+    info = getInfo(el.getElementsByClassName(NAMEROWIDENTIFIER));
+    const inSector = `${routesByCragMap.get(info.sector).totalRoutes} route${routesByCragMap.get(info.sector).totalRoutes > 1 ? 's' : ''} in sector ${info.sector}`;
+    const inCrag = `${routesByCragMap.get(info.sector).Crags.get(info.crag).routes} route${routesByCragMap.get(info.sector).Crags.get(info.crag).routes > 1 ? 's': ''} in crag ${info.crag}`;
     countDiv.textContent = '   (';
-    countDiv.textContent += currentCrag != '' ? `${inSector}, ` : '';
+    countDiv.textContent += info.crag != '' ? `${inSector}, ` : '';
     countDiv.textContent += `${inCrag}`;
     countDiv.textContent += 'on this page)';
     el.appendChild(countDiv);
