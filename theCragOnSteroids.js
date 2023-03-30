@@ -1,9 +1,7 @@
-/* eslint-disable require-jsdoc */
-/* eslint-disable max-len */
 // ==UserScript==
 // @name         theCrag on steroids
 // @namespace    http://tampermonkey.net/
-// @version      0.2.1
+// @version      0.2.5
 // @description  Some userspace impovements to make theCrag even better!
 // @author       Thomas Heuberger
 // @match        https://www.thecrag.com/*/routes*
@@ -32,7 +30,8 @@
   const header = routesTable.querySelector(HEADERIDENTIFIER);
   const routesRows = routesTable.querySelector('tbody').getElementsByTagName('tr');
 
-  header.appendChild(document.createTextNode(`   (Displaying ${cragsByGroup.length} crag${cragsByGroup.length > 1 ? 's' : ''} on this page)`));
+  header.appendChild(document.createTextNode(
+      `   (Displaying ${cragsByGroup.length} crag${cragsByGroup.length > 1 ? 's' : ''} on this page)`));
 
   const routesByCragMap = new Map();
   let info = {};
@@ -62,8 +61,12 @@
     const countDiv = document.createElement('div');
     countDiv.style = STYLE;
     info = getInfo(el.getElementsByClassName(NAMEROWIDENTIFIER));
-    const inSector = `${routesByCragMap.get(info.sector).totalRoutes} route${routesByCragMap.get(info.sector).totalRoutes > 1 ? 's' : ''} in sector ${info.sector}`;
-    const inCrag = `${routesByCragMap.get(info.sector).Crags.get(info.crag).routes} route${routesByCragMap.get(info.sector).Crags.get(info.crag).routes > 1 ? 's': ''} in crag ${info.crag}`;
+    const inSector =
+      `${routesByCragMap.get(info.sector).totalRoutes} 
+      route${routesByCragMap.get(info.sector).totalRoutes > 1 ? 's' : ''} in sector ${info.sector}`;
+    const inCrag =
+      `${routesByCragMap.get(info.sector).Crags.get(info.crag).routes} 
+      route${routesByCragMap.get(info.sector).Crags.get(info.crag).routes > 1 ? 's': ''} in crag ${info.crag}`;
     countDiv.textContent = '   (';
     countDiv.textContent += info.crag != '' ? `${inSector}, ` : '';
     countDiv.textContent += `${inCrag}`;

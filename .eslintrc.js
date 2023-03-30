@@ -1,3 +1,4 @@
+/* eslint-disable */
 module.exports = {
     "env": {
         "browser": true,
@@ -10,5 +11,7 @@ module.exports = {
         "ecmaVersion": "latest"
     },
     "rules": {
+        "require-jsdoc": "off",
+        "max-len": ["error", { "code": 120 }]
     }
 }
