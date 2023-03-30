@@ -9,7 +9,6 @@
 // @match        https://www.thecrag.com/*/routes*
 // @icon         https://static.thecrag.com/cids/images/logo17-1.1.1.svg
 // @grant        none
-// @require      file:///Users/thomasheuberger/Documents/Repos/theCragOnSteroids/theCragOnSteroids.js
 // ==/UserScript==
 
 (function() {
@@ -24,7 +23,6 @@
   }
 
   const routesTable = document.getElementsByClassName('routetable facet-results')[0];
-  routesTable.id = 'resultTable';
   const cragsByGroup = routesTable.getElementsByClassName('group');
   const header = routesTable.querySelector('tbody > tr:nth-child(1) > th:nth-child(4)');
   const routesRows = routesTable.querySelector('tbody').getElementsByTagName('tr');
